@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ScoreBoard :computerScore="this.computerScore" :playerScore="this.playerScore"/>
+    <ScoreBoard :computerScore="this.placar.computer" :playerScore="this.placar.player"/>
     <template v-if="this.question">
       <h1 v-html="this.question"></h1>
 
@@ -18,7 +18,7 @@
       <button v-if="!this.answerSubmited" class="send" @click="this.submitChoosen()" type="button">Send</button>
       
       <section v-if="this.answerSubmited" class="result">
-        <h4 v-if="this.choosen == this.wrightAnswer" >&#9989; Yaeh! Você escolheu a resposta certa!</h4>
+        <h4 v-if="this.choosen == this.wrightAnswer" >&#9989; Yeah! Você escolheu a resposta certa!</h4>
         <h4 v-else 
           v-html="`&#10060; Ah não, você escolheu a resposta errada. A resposta correta é '${this.wrightAnswer}'`"></h4>
         <button class="send" @click="this.getNewQuestion()" type="button">Próxima pergunta</button>
@@ -44,7 +44,10 @@ export default {
       answerSubmited : false,
       computerScore : 0,
       playerScore : 0,
-
+      placar : {
+        player : 0,
+        computer : 0,
+      },
     }
   },
   computed: {
@@ -64,10 +67,13 @@ export default {
         if(this.choosen === this.wrightAnswer){
           console.log('acertou')
           this.playerScore++
+          this.placar.player++
         }else{
           console.log('errou')
           this.computerScore++
+          this.placar.computer++
         }
+        localStorage.setItem("placar", JSON.stringify(this.placar));
       }
     },
     getNewQuestion(){
@@ -84,6 +90,7 @@ export default {
     }
   },
   created() {
+    this.placar = localStorage.getItem('placar') ? JSON.parse(localStorage.getItem('placar')) : {};
     this.getNewQuestion()
   },
   components: {
